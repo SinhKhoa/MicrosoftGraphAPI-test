@@ -1,0 +1,19 @@
+import { Client } from "@microsoft/microsoft-graph-client";
+import "isomorphic-fetch";
+
+export async function getMyProfile(accessToken) {
+  if (!accessToken) {
+    throw new Error("Access token is required");
+  }
+
+  const graphClient = Client.init({
+    authProvider: (done) => {
+      done(null, accessToken);
+    }
+  });
+
+  return await graphClient
+    .api("/me")
+    .select("id,displayName,mail,userPrincipalName")
+    .get();
+}
