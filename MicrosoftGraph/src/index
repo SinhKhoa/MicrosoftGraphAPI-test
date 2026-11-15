@@ -1,0 +1,26 @@
+import "dotenv/config";
+
+import { DeviceCodeCredential } from "@azure/identity";
+import settings from "./config/settings.js";
+import { getMyProfile } from "./services/graphService.js";
+
+async function main() {
+  const credential = new DeviceCodeCredential({
+    tenantId: settings.tenantId,
+    clientId: settings.clientId,
+    userPromptCallback: (info) => {
+      console.log(info.message);
+    }
+  });
+
+  const token = await credential.getToken(
+    "https://graph.microsoft.com/User.Read"
+  );
+
+  const profile = await getMyProfile(token.token);
+
+  console.log("Microsoft 365 Profile:");
+  console.log(profile);
+}
+
+main().catch(console.error);
